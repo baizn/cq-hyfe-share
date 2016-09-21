@@ -1,36 +1,33 @@
 import React, { Component } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import * as Actions from '../actions'
+
+function mapStateToProps(state){
+    return {
+        count : state
+    }
+}
+function mapDispatchToProps(dispatch){
+    return {
+        actions : bindActionCreators(Actions,dispatch)
+    }
+}
 
 class Count extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            count: 1
-        }
-        this.addCount = this.addCount.bind(this)
-        this.subCount = this.subCount.bind(this)
-    }
-
-    addCount() {
-        this.setState({
-            count: ++this.state.count
-        })
-    }
-
-    subCount() {
-        this.setState({
-            count: --this.state.count
-        })
-    }
-
     render() {
+        const { count, actions } = this.props
         return (
             <div>
-                <button onClick={this.addCount}>add</button>
-                <span>{this.state.count}</span>
-                <button onClick={this.subCount}>sub</button>
+                <button onClick={actions.addCount}>add</button>
+                <span>{count.count}</span>
+                <button onClick={actions.subCount}>sub</button>
             </div>
         )
     }
 } 
 
-export default Count
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Count)
