@@ -303,8 +303,205 @@ width: $fancybox-width;
 ```
 在上例中，如果用户导入你的```sass```局部文件之前声明了一个```$fancybox-width```变量，那么你的局部文件中对```$fancybox-width```赋值```400px```的操作就无效。
 
-##### **混合器**
+#### **混合器@mixin**
+
+如果你的网站中有几处小小的样式类似(例如一致的颜色和字体)，那么使用变量来统一处理这种情况时非常不错的选择。但是当你的样式变得越来越复杂，你就需要用到```sass```的新技能混合器```@mixin```来实现大段样式的重用。
 
 
+举个栗子，下边的这段```sass```代码，定义了一个非常简单的混合器，然后通过```@include```来使用这个混合器，目的是添加跨浏览器的圆角边框。
+``` css
+@mixin rounded-corners {
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+notice {
+  background-color: green;
+  border: 2px solid #00aa00;
+  @include rounded-corners;
+}
+
+//sass最终生成：
+
+.notice {
+  background-color: green;
+  border: 2px solid #00aa00;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+```
+
+##### **混合器的使用场景**
+
+利用混合器，可以很容易地在样式表的不同地方共享样式。如果你发现自己在不停地重复一段样式，那就应该把这段样式构造成优良的混合器，尤其是这段样式本身就是一个逻辑单元，比如说是一组放在一起有意义的属性。
+
+判断一组属性是否应该组合成一个混合器，一条经验法则就是你能否为这个混合器想出一个好的名字。就是你可以找到一个很好的短名字来描述这些属性修饰的样式。说白了混合器不同于```css```中的类名，它是一种展示性的描述，而类名更具语义化含义。
+
+##### **混合器中也可以使用CSS规则**
+
+混合器中不仅可以包含属性，也可以包含```css```规则，包含选择器和选择器中的属性，如下代码：
+``` css
+@mixin no-bullets {
+  list-style: none;
+  li {
+    list-style-image: none;
+    list-style-type: none;
+    margin-left: 0px;
+  }
+}
+ul.plain {
+  color: #444;
+  @include no-bullets;
+}
+```
+
+编译后：
+``` css
+ul.plain {
+  color: #444;
+  list-style: none;
+}
+ul.plain li {
+  list-style-image: none;
+  list-style-type: none;
+  margin-left: 0px;
+}
+```
 
 
+##### **可以给混合器传参**
+
+混合器并不一定总得生成相同的样式。可以通过在```@include```混合器时给混合器传参，来定制混合器生成的精确样式。当```@include```混合器时，参数其实就是可以赋值给```css```属性值的变量。这种方式跟```JavaScript```的```function```很像：
+
+``` css
+@mixin link-colors($normal, $hover, $visited) {
+  color: $normal;
+  &:hover { color: $hover; }
+  &:visited { color: $visited; }
+}
+```
+当混合器被```@include```时，你可以把它当作一个```css```函数来传参。比如像下边的例子：
+``` css
+a {
+  @include link-colors(blue, red, green);
+}
+
+//Sass最终生成的是：
+
+a { color: blue; }
+a:hover { color: red; }
+a:visited { color: green; }
+```
+
+当你```@include```混合器时，有时候可能会很难区分每个参数是什么意思，参数之间是一个什么样的顺序。为了解决这个问题，```sass```允许通过语法```$name: value```的形式指定每个参数的值。这种形式的传参，参数顺序就不必再在乎了，只需要保证没有漏掉参数即可：
+
+``` css
+a {
+    @include link-colors(
+      $normal: blue,
+      $visited: green,
+      $hover: red
+  );
+}
+```
+##### **默认参数**
+
+尽管给混合器加参数来实现定制很好，但是有时有些参数我们没有定制的需要，这时候也需要赋值一个变量就变成很痛苦的事情了。所以```sass```允许混合器声明时给参数赋默认值。
+
+为了在```@include```混合器时不必传入所有的参数，我们可以给参数指定一个默认值。参数默认值使用```$name: default-value```的声明形式，默认值可以是任何有效的```css```属性值，甚至是其他参数的引用，如下代码：
+
+``` css
+@mixin link-colors(
+    $normal,
+    $hover: $normal,
+    $visited: $normal
+  )
+{
+  color: $normal;
+  &:hover { color: $hover; }
+  &:visited { color: $visited; }
+}
+```
+
+#### sass 继承 @extend
+
+混合器只是```sass```样式重用特性中的一个。但是如果我们想要重用语义化的类呢？这时候，就要祭出```sass```大杀器----选择器继承了。
+
+使用```sass```的时候，最后一个减少重复的主要特性就是选择器继承。基于```Nicole Sullivan```面向对象的css的理念，选择器继承是说一个选择器可以继承为另一个选择器定义的所有样式。
+``` css
+//通过选择器继承继承样式
+.error {
+  border: 1px red;
+  background-color: #fdd;
+}
+.seriousError {
+  @extend .error;
+  border-width: 3px;
+}
+```
+但是，以这种方式继承的话，```.seriousError```
+不仅会继承```.error```自身的所有样式，任何跟```.error```有关的组合选择器样式也会被```.seriousError```以组合选择器的形式继承， 比如：
+``` css
+//.seriousError从.error继承样式
+.error a{  //应用到.seriousError a
+  color: red;
+  font-weight: 100;
+}
+h1.error { //应用到hl.seriousError
+  font-size: 1.2rem;
+}
+```
+#####  **sass继承的最佳实践**
+
+这里只举出一个```sass```继承的最佳实践，其中的坑如果遇到的话请参考文末的参考链接。
+
+这里说说继承的使用场景。```sass```混合器主要用于展示性样式的重用，而类名用于语义化样式的重用。因为继承是基于类的（有时是基于其他类型的选择器），所以继承应该是建立在语义化的关系上。当一个元素拥有的类（比如说```.seriousError```）表明它属于另一个类（比如说```.error```），这时使用继承再合适不过了。
+
+但是，有一些细微的区别需要自己在用到这个预编译器的时候才能慢慢体会出来，比如像```#main .error```这种选择器序列是不能被继承的。因为从```#main .error```中继承的样式一般情况下会跟直接从```.error```中继承的样式基本一致。
+
+在这里简单的写写```@extend```的基本思想，如果```.seriousError @extend .error```， 那么样式表中的任何一处```.error```都用```.error  .seriousError```这一选择器组进行替换。这就意味着相关样式会如预期那样应用到```.error```和```.seriousError```。当```.error```出现在复杂的选择器中，比如说```h1.error```,```.error a```或者```#main .sidebar input.error[type="text"]```，那情况就变得复杂多了。但是```sass```里面已经考虑到这些，请自行查阅。
+
+在这里，```@extend```有两个要点，一个是与```@mixin```相比，```@extend```生成的代码相对更少，因为继承仅仅是重复选择器，而不是重复属性；另一个要点是，继承遵从```css```层叠的规则。当两个不同的```css```规则应用到同一个html元素上时，并且这两个不同的```css```规则对同一属性的修饰存在不同的值，```css```层叠规则会决定应用哪个样式。相当直观：通常权重更高的选择器胜出，如果权重相同，定义在后边的规则胜出。
+
+
+因为···@extend```会在生成```css```时复制选择器，所以使用···@extend```的最好办法就是不用在```css```规则中使用后代选择器（比如```.foo .bar```）去继承```css```规则。如果你这么做，同时被继承的```css```规则有通过后代选择器修饰的样式(```.bip .baz```中的```.baz```)，生成```css```中的选择器的数量很快就会失控：
+
+``` css
+.foo .bar { @extend .baz; }
+.bip .baz { background: blue; }
+```
+
+``` css
+/* 编译后会出现的情况 */
+.foo .bip .bar{
+     background: blue;
+}
+
+.bip .foo .bar{
+     background: blue;
+}
+
+/* 此处的.foo与.bip在一个标签里面 */
+.foo/.bip .bar{
+     background: blue;
+}
+```
+
+在上边的例子中，```sass```必须保证应用到```.baz```的样式同时也要应用到```.foo .bar```（位于```class="foo"```的元素内的```class="bar"```的元素）。例子中有一条应用到```.bip .baz```（位于```class="bip"```的元素内的```class="baz"```的元素）的```css```规则。当这条规则应用到```.foo .bar```时，就可能存在三种情况。
+
+值得一提的是，只要你想，你完全可以放心地继承有后代选择器修饰规则的选择器，不管后代选择器多长，但有一个前提就是，不要用后代选择器去继承。
+
+
+#### **总结**
+
+
+帝都的培训之旅，或者说是探索未知的旅行也好，对于我来说是一个新的起点，在学到新的技术，结交到新的朋友的同时，带给我的，是一种全新的认知。我第一次体会到，保持年轻的心态以及持续学习的能力，保有足够的体力以及好奇心，才能让自己更加感激这个社会，感恩遇到的你们。我希望我可以更加努力，让我可以在未来遇到更多的深情款款的你们。
+
+#### **文末链接**
+
+[HTML5的新技术-WebSocket](http://www.cnblogs.com/wei2yi/archive/2011/03/23/1992830.html)
+
+[Sass中文学习指南](http://www.sasschina.com/guide/)
+
+    
