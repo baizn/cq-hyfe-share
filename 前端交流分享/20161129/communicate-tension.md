@@ -145,6 +145,20 @@ $ gem install sass
 
 这样，sass的开发环境就配置好了。
 
+### sass常用命令行编译
+
+单文件转换命令
+```
+sass style.scss style.css
+```
+单文件监听命令
+```
+sass --watch style.scss"style.css
+```
+```
+sass --watch sassFileDirectory:csFileDirectory
+```
+
 
 ### sass 常用语法
 
@@ -269,5 +283,28 @@ nav {
 }
 ```
 
-##### **默认变量值**
+##### **默认变量值!default**
+
+一般情况下，你反复声明一个变量，只有最后一处声明有效且它会覆盖前边的值。例如：
+``` css
+$link-color: blue;
+$link-color: red;
+a {
+color: $link-color;
+}
+```
+这可能并不是你想要的结果，假如你写了一个可被他人通过```@import```导入的```sass```库文件，你可能希望导入者可以定制修改```sass```库文件中的某些值，这时候可以使用一个很像```css```属性中```!important```标签的对立面```!default```，只不过```!default```用于变量。例如：
+``` css
+/* @import */
+$fancybox-width: 400px !default;
+.fancybox {
+width: $fancybox-width;
+}
+```
+在上例中，如果用户导入你的```sass```局部文件之前声明了一个```$fancybox-width```变量，那么你的局部文件中对```$fancybox-width```赋值```400px```的操作就无效。
+
+##### **混合器**
+
+
+
 
