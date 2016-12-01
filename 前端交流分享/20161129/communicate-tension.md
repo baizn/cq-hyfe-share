@@ -504,4 +504,19 @@ h1.error { //应用到hl.seriousError
 
 [Sass中文学习指南](http://www.sasschina.com/guide/)
 
-    
+  
+另外两款CSS预编译器
+
+[Less中文网](http://lesscss.cn/)
+
+[Less官方文档](http://lesscss.org/)
+
+[张鑫旭总结的Stylus中文文档](http://www.zhangxinxu.com/jq/stylus/)
+
+还有两款CSS后编译器
+
+[Autoprefixer放在Github上的文档](https://github.com/postcss/autoprefixer)
+
+[Postcss放在Github上的文档](https://github.com/postcss/postcss)
+
+[Postcss插件工具库](http://www.open-open.com/lib/view/open1420382286828.html)
