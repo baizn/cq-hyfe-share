@@ -496,7 +496,7 @@ h1.error { //应用到hl.seriousError
 #### **总结**
 
 
-帝都的培训之旅，或者说是探索未知的旅行也好，对于我来说是一个新的起点，在学到新的技术，结交到新的朋友的同时，带给我的，是一种全新的认知。我第一次体会到，保持年轻的心态以及持续学习的能力，保有足够的体力以及好奇心，才能让自己更加感激这个社会，感恩遇到的你们。我希望我可以更加努力，让我可以在未来遇到更多的深情款款的你们。
+帝都的培训之旅，或者说是探索未知的旅行也好，对于我来说是一个新的起点，在学到新的技术，结交到新的朋友的同时，带给我的，是一种全新的认知。我第一次体会到，保持年轻的心态以及持续学习的能力，保有足够的体力以及好奇心，才能让自己更加感激这个社会，感恩遇到的你们。我希望我可以更加努力，让我可以在未来遇到更多的深情款款的你们。PS：关于**sass**预编译器只描述了其中的常用知识点，并没有涉及到**sass**中的奇技淫巧，如果想继续深入了解可以参考文末链接。
 
 #### **文末链接**
 
@@ -504,4 +504,19 @@ h1.error { //应用到hl.seriousError
 
 [Sass中文学习指南](http://www.sasschina.com/guide/)
 
-    
+  
+另外两款CSS预编译器
+
+[Less中文网](http://lesscss.cn/)
+
+[Less官方文档](http://lesscss.org/)
+
+[张鑫旭总结的Stylus中文文档](http://www.zhangxinxu.com/jq/stylus/)
+
+还有两款CSS后编译器
+
+[Autoprefixer放在Github上的文档](https://github.com/postcss/autoprefixer)
+
+[Postcss放在Github上的文档](https://github.com/postcss/postcss)
+
+[Postcss插件工具库](http://www.open-open.com/lib/view/open1420382286828.html)
